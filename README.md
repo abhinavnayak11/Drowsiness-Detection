@@ -5,6 +5,7 @@
   * [Application](#application)
   * [Approach](#approach)
   * [Installation](#installation)
+  * [License](#license)
 
 ## [Overview](#table-of-content)
 This project will detect a drowsy person through live webcam, alert them while displaying that person's face. 
@@ -30,4 +31,9 @@ This project will detect a drowsy person through live webcam, alert them while d
 - `cd path/to/project` : cd into the project folder
 - `conda activate dlib-env` : activate the virtual env
 - `python -m src.drowsiness-detection` : Run the script
+
+<br>
+
+---
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://github.com/abhinavnayak11/Drowsiness-Detection/blob/main/LICENSE)
 
