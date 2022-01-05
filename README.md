@@ -26,8 +26,9 @@ This project will detect a drowsy person through live webcam, alert them while d
 
 ## [Installation](#table-of-content)
 - You need Python (3.6) & git (to clone this repo)
-- `pip install -r requirements.txt` : This will install all the dependencies. 
-- `git clone https://github.com/abhinavnayak11/flight-prediction.git .` : To clone this repo
-- `cd path/to/project`
-- `python -m src.drowsiness-detection` : To run the script
+- `conda env create -f environment.yml` : Create a virtual env with all the dependencies
+- `git clone git@github.com:abhinavnayak11/Drowsiness-Detection.git .` : Clone this repo
+- `cd path/to/project` : cd into the project folder
+- `conda activate dlib-env` : activate the virtual env
+- `python -m src.drowsiness-detection` : Run the script
 
