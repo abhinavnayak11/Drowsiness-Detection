@@ -5,7 +5,6 @@
   * [Application](#application)
   * [Approach](#approach)
   * [Installation](#installation)
-  * [License](#license)
 
 ## [Overview](#table-of-content)
 This project will detect a drowsy person through live webcam, alert them while displaying that person's face. 
