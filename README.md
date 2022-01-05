@@ -5,7 +5,6 @@
   * [Application](#application)
   * [Approach](#approach)
   * [Installation](#installation)
-  * [Future scope](#future-scope)
 
 ## [Overview](#table-of-content)
 This project will detect a drowsy person through live webcam, alert them while displaying that person's face. 
@@ -14,7 +13,7 @@ This project will detect a drowsy person through live webcam, alert them while d
 
 ![](images/demo.gif)
 
-## [Applications](#table-of-content)
+## [Application](#table-of-content)
 - Monitor drivers to avoid accidents
 - Monitor students in class to sport the inattentive one (although, that would be mean :p)
 
