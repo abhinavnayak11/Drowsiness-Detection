@@ -36,8 +36,6 @@ This project will detect a drowsy person through live webcam, alert them while d
 ### Inspiration
 - Akshay Bahadur, [Drowsiness Detection repo](https://github.com/akshaybahadur21/Drowsiness_Detection)
 
-<br>
-
 ---
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://github.com/abhinavnayak11/Drowsiness-Detection/blob/main/LICENSE)
 
