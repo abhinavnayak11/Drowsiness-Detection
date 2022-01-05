@@ -9,7 +9,7 @@
 ## [Overview](#table-of-content)
 This project will detect a drowsy person through live webcam, alert them while displaying that person's face. 
 
-**<p align="center">App demo</p>**
+**<p>App demo</p>**
 
 ![](images/demo.gif)
 
