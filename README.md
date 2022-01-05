@@ -9,7 +9,7 @@
 ## [Overview](#table-of-content)
 This project will detect a drowsy person through live webcam, alert them while displaying that person's face. 
 
-**<p>App demo</p>**
+**<p align="center">App demo</p>**
 
 ![](images/demo.gif)
 
@@ -30,6 +30,11 @@ This project will detect a drowsy person through live webcam, alert them while d
 - `cd path/to/project` : cd into the project folder
 - `conda activate dlib-env` : activate the virtual env
 - `python -m src.drowsiness-detection` : Run the script
+
+<br>
+
+### Inspiration
+- Akshay Bahadur, [Drowsiness Detection repo](https://github.com/akshaybahadur21/Drowsiness_Detection)
 
 <br>
 
