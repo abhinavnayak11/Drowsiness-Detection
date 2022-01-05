@@ -1,8 +1,16 @@
+'''
+* Copyright (c) 2017 Akshay Bahadur. All rights reserved.
+* Copyrights licensed under the MIT License
+* License Terms at the bottom.
+'''
+
 import cv2
 import dlib
 import numpy as np
 from scipy.spatial import distance
 import os
+
+from src.alert import alert_drowsy_person
 
 face_detector = dlib.get_frontal_face_detector()
 landmark_detector = dlib.shape_predictor('models/shape_predictor_68_face_landmarks.dat')
@@ -16,80 +24,82 @@ def eye_aspect_ratio(eye):
 	EAR = (A + B) / (2.0 * C)
 	return EAR
 
+def calc_EAR(frame, face):
+
+    landmarks = landmark_detector(frame, face)
+    left_eye_points = []
+    right_eye_points = []
+    for i in range(36,42):
+        x = landmarks.part(i).x
+        y = landmarks.part(i).y
+        left_eye_points.append((x, y))
+    
+    for i in range(42, 48):
+        x = landmarks.part(i).x
+        y = landmarks.part(i).y
+        right_eye_points.append((x, y))
+    
+    left_eye_points = np.array(left_eye_points)
+    right_eye_points = np.array(right_eye_points)
+
+    leftEAR = eye_aspect_ratio(left_eye_points)
+    rightEAR = eye_aspect_ratio(right_eye_points)
+    EAR = (leftEAR + rightEAR) / 2.0
+
+    leftEyeHull = cv2.convexHull(left_eye_points)
+    rightEyeHull = cv2.convexHull(right_eye_points)
+
+    cv2.drawContours(frame, [leftEyeHull], -1, (0, 255, 0), 1)
+    cv2.drawContours(frame, [rightEyeHull], -1, (0, 255, 0), 1)
+
+    return frame, EAR
+
 flag = 0
 
-main_loop = 0
+if __name__=="__main__":
 
-while True:
-    _, frame = cap.read()
-    frame_orig = frame.copy()
-    gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+    while True:
+        _, frame = cap.read()
+        frame_orig = frame.copy()       # this will be used to extract face (w/o eye contours) of drowsy person
+        faces = face_detector(frame)
 
-    faces = face_detector(gray)
+        EARS = np.array([])
+        for face in faces:
 
-    EARS = np.array([])
-    for face in faces:
+            frame, EAR = calc_EAR(frame, face)
 
-        # if main_loop == 0:
-        #     print(type(face))
-        #     face_img = frame[face.top():face.bottom(), face.left():face.right()]
-        #     face_img = cv2.resize(face_img, (75,75))
-        #     print(face_img.shape)
-        #     main_loop = 1
+            EARS = np.append(EARS, [EAR])
 
-        landmarks = landmark_detector(gray, face)
-        left_eye_points = []
-        right_eye_points = []
-        for i in range(36,42):
-            x = landmarks.part(i).x
-            y = landmarks.part(i).y
-            left_eye_points.append((x, y))
+        frame, flag = alert_drowsy_person(frame_orig, frame, faces, EARS, flag)
         
-        for i in range(42, 48):
-            x = landmarks.part(i).x
-            y = landmarks.part(i).y
-            right_eye_points.append((x, y))
-        
-        left_eye_points = np.array(left_eye_points)
-        right_eye_points = np.array(right_eye_points)
+        cv2.imshow('drowsiness detector', frame)
 
-        leftEAR = eye_aspect_ratio(left_eye_points)
-        rightEAR = eye_aspect_ratio(right_eye_points)
-        EAR = (leftEAR + rightEAR) / 2.0
+        if cv2.waitKey(1) & 0xFF == 27:
+            break
 
-        leftEyeHull = cv2.convexHull(left_eye_points)
-        rightEyeHull = cv2.convexHull(right_eye_points)
+    cap.release()
+    cv2.destroyAllWindows()
 
-        cv2.drawContours(frame, [leftEyeHull], -1, (0, 255, 0), 1)
-        cv2.drawContours(frame, [rightEyeHull], -1, (0, 255, 0), 1)
+'''
+MIT License
 
-        EARS = np.append(EARS, [EAR])
+Copyright (c) 2017 Akshay Bahadur
 
-    if faces:   # if no faces detected, EARS variable will be empty. Thus this will avoid error.
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
 
-        EAR_avg = EARS.min()        # select the minimum EAR value. 
-        face_idx = EARS.argmin()    # select the face index with min EAR value
-        face = faces[face_idx]      # select the face with min EAR value
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
 
-        if EAR_avg < 0.22:          # display the face with EAR value < 0.22
-            flag += 1
-            if flag >= 10:          # only alert if drowsy for more than 10 frames
-                cv2.putText(frame, "****************ALERT!****************", (100, 30),
-                    cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0, 0, 255), 2)
-                cv2.putText(frame, "****************ALERT!****************", (100,450),
-                    cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0, 0, 255), 2)
-                face_img = frame_orig[face.top():face.bottom(), face.left():face.right()]
-                face_img = cv2.resize(face_img, (100,100))
-
-                frame[45:145, 270:370] = face_img
-                print('\a', end='')     # to make sound
-        else:
-            flag = 0
-    
-    cv2.imshow('drowsiness detector', frame)
-
-    if cv2.waitKey(1) & 0xFF == 27:
-        break
-
-cap.release()
-cv2.destroyAllWindows()
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+'''
